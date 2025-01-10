@@ -1,0 +1,136 @@
+/* Body Styles */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc; /* Light background for a clean look */
+    color: #333; /* Neutral text color */
+    overflow: hidden;
+    width: 360px; /* Fixed popup width */
+    height: 560px; /* Fixed popup height */
+}
+
+/* Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Smooth shadow */
+    border-radius: 10px; /* Rounded corners for modern feel */
+    overflow: hidden;
+}
+
+/* Header */
+header {
+    background-color: #5b92f7; /* Smooth blue */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 4px solid #4a7fd0; /* Subtle border */
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.settings-btn {
+    background-color: #4a7fd0;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px; /* Rounded button */
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.settings-btn:hover {
+    background-color: #3b68a5;
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+nav button {
+    padding: 12px;
+    border: none;
+    background-color: #e9f1fe;
+    color: #5b92f7;
+    font-weight: bold;
+    border-radius: 10px; /* Smooth corners */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%; /* Ensure even width for all buttons */
+    text-align: left;
+}
+
+nav button:hover {
+    background-color: #d4e5fc;
+    transform: translateY(-2px); /* Lift effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Deeper shadow */
+}
+
+/* Main Section */
+main {
+    padding: 15px;
+    flex: 1;
+}
+
+main h2 {
+    font-size: 1.2rem;
+    color: #4a7fd0;
+    margin-bottom: 10px;
+}
+
+.flowchart-container {
+    background-color: #f0f4ff;
+    border: 2px dashed #a3bffa;
+    border-radius: 10px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #7b9cd3;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle inset shadow */
+}
+
+.generate-btn {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: #5b92f7;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%; /* Ensure even width */
+}
+
+.generate-btn:hover {
+    background-color: #3b68a5;
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Footer */
+footer {
+    background-color: #4a7fd0;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+    border-top: 4px solid #5b92f7;
+}
