@@ -2,12 +2,24 @@
   "manifest_version": 3,
   "name": "DocuEase",
   "version": "1.0",
-  "description": "ummarize and generate charts from web pages using AI.",
-  "action": {
-    "default_popup": "index.html",
-    "default_title": "Open"
-  },
   "permissions": [
+    "activeTab",
     "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
   ]
 }

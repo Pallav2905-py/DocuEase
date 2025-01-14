@@ -3,17 +3,19 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const app = express();
+const Groq = require('groq-sdk');
+
 const port = 5000;
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-
+const groq = new Groq({ apiKey: "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" });
 // Endpoint to generate PlantUML code
 app.post('/generate-flow-chart', async (req, res) => {
 
     console.log("Recieved & Processing Request");
-    
+
     const { text } = req.body;
 
     if (!text) {
@@ -39,21 +41,41 @@ app.post('/generate-flow-chart', async (req, res) => {
     });
 
     // Fetch response from the external API
+    // Extract only PlantUML code from the raw response and send it back as JSON
     try {
         const response = await fetch("https://api.worqhat.com/api/ai/content/v4", {
             method: 'POST',
             headers: myHeaders,
-            body: raw
+            body: raw,
         });
 
-        const data = await response.text();
-        console.log(data);
-        
-        // Return the PlantUML code as the response
-        res.status(200).send(data);
+        const rawData = await response.text(); // Get the raw string response
+        console.log('Raw API Response:', rawData);
+
+        // Use Groq to extract the PlantUML content
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: 'user',
+                    content: `Extract only the PlantUML code from the following text:\n\n${rawData}`,
+                },
+            ],
+            model: 'llama-3.3-70b-versatile',
+            temperature: 0,
+            max_tokens: 1024,
+        });
+
+        // Directly access the content field from the response
+        const plantUML = chatCompletion.choices[0]?.message?.content?.trim();
+
+        if (plantUML) {
+            res.status(200).json({ plantumlCode: plantUML });
+        } else {
+            throw new Error('Failed to extract PlantUML code');
+        }
     } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Failed to generate PlantUML code' });
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to generate flowchart' });
     }
 });
 
