@@ -2,32 +2,44 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f9fc; /* Light background for a clean look */
-  color: #333; /* Neutral text color */
-  overflow-y: auto; /* Enable vertical scrolling */
-  width: 360px; /* Fixed popup width */
-  min-height: 100vh; /* Ensure body height scales with content */
+  background-color: #f7f9fc;
+  /* Light background for a clean look */
+  color: #333;
+  /* Neutral text color */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  width: 360px;
+  /* Fixed popup width */
+  min-height: 100vh;
+  /* Ensure body height scales with content */
 }
 
 /* Container */
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ensure the container fills the viewport */
-  max-height: 560px; /* Optional: Restrict max height */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Smooth shadow */
-  border-radius: 10px; /* Rounded corners for modern feel */
-  overflow:auto;
+  height: 100%;
+  /* Ensure the container fills the viewport */
+  max-height: 560px;
+  /* Optional: Restrict max height */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Smooth shadow */
+  border-radius: 10px;
+  /* Rounded corners for modern feel */
+  overflow: auto;
 }
+
 /* Header */
 header {
-  background-color: #5b92f7; /* Smooth blue */
+  background-color: #5b92f7;
+  /* Smooth blue */
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 15px;
-  border-bottom: 4px solid #4a7fd0; /* Subtle border */
+  border-bottom: 4px solid #4a7fd0;
+  /* Subtle border */
 }
 
 header h1 {
@@ -41,7 +53,8 @@ header h1 {
   color: white;
   border: none;
   padding: 8px 12px;
-  border-radius: 20px; /* Rounded button */
+  border-radius: 20px;
+  /* Rounded button */
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.3s ease;
@@ -67,18 +80,22 @@ nav button {
   background-color: #e9f1fe;
   color: #5b92f7;
   font-weight: bold;
-  border-radius: 10px; /* Smooth corners */
+  border-radius: 10px;
+  /* Smooth corners */
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  width: 100%; /* Ensure even width for all buttons */
+  width: 100%;
+  /* Ensure even width for all buttons */
   text-align: left;
 }
 
 nav button:hover {
   background-color: #d4e5fc;
-  transform: translateY(-2px); /* Lift effect */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Deeper shadow */
+  transform: translateY(-2px);
+  /* Lift effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  /* Deeper shadow */
 }
 
 /* Main Section */
@@ -114,8 +131,10 @@ main h2 {
 }
 
 .flowchart-container img {
-  max-width: 100%; /* Ensure the image fits within the container */
-  height: auto; /* Maintain aspect ratio */
+  max-width: 100%;
+  /* Ensure the image fits within the container */
+  height: auto;
+  /* Maintain aspect ratio */
 }
 
 .generate-btn {
@@ -129,12 +148,14 @@ main h2 {
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 100%; /* Ensure even width */
+  width: 100%;
+  /* Ensure even width */
 }
 
 .generate-btn:hover {
   background-color: #3b68a5;
-  transform: scale(1.05); /* Slight zoom effect */
+  transform: scale(1.05);
+  /* Slight zoom effect */
 }
 
 /* Footer */
@@ -145,4 +166,38 @@ footer {
   padding: 10px;
   font-size: 0.8rem;
   border-top: 4px solid #5b92f7;
+}
+
+/* URL Input */
+.url-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.url-input-container.hidden {
+  display: none;
+}
+
+.url-input-container label {
+  font-size: 1rem;
+  color: #4a7fd0;
+  font-weight: bold;
+}
+
+.url-input-container input {
+  padding: 10px;
+  border: 2px solid #a3bffa;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s ease;
+}
+
+.url-input-container input:focus {
+  outline: none;
+  border-color: #5b92f7;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1);
 }

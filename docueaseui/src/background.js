@@ -1,14 +1,9 @@
-console.log('Background worker running');
-
-// background.js
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "getScrapedText") {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "getScrapedText" }, (response) => {
-          sendResponse({ text: response.text });
+// background.js or popup.js
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "getCurrentTabUrl") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            sendResponse({ url: tabs[0].url });
         });
-      });
-      return true; // Required to use sendResponse asynchronously
+        return true; // Indicate asynchronous response
     }
-  });
-  
+});

@@ -4,7 +4,9 @@
   "version": "1.0",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs",
+    "activeTab"
   ],
   "background": {
     "service_worker": "background.js"
