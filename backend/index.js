@@ -79,6 +79,63 @@ app.post('/generate-flow-chart', async (req, res) => {
     }
 });
 
+app.post('/update-check', async (req, res) => {
+    const { url } = req.body;
+
+    const prompt = `
+        I am building a developer tool to help users stay updated with the latest changes in ${url}. 
+        Please provide the following in JSON format:
+        {
+            "updates": [
+                {
+                    "title": "Update Title",
+                    "description": "Brief description of the update.",
+                    "example": "Code snippet showcasing the update.",
+                    "documentationLink": "Link to detailed documentation (optional)"
+                }
+            ]
+        }
+            Only send json nothing else
+    `;
+
+    try {
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: 'user',
+                    content: prompt,
+                },
+            ],
+            model: 'llama-3.3-70b-versatile',
+            temperature: 1,
+            max_tokens: 32766,
+        });
+
+        // Extract data from the chat response
+        const data = chatCompletion.choices[0]?.message?.content?.trim();
+
+        // Parse the JSON response to extract `updates`
+        let updates = [];
+        try {
+            const parsedData = JSON.parse(data);
+            if (parsedData?.updates && Array.isArray(parsedData.updates)) {
+                updates = parsedData.updates;
+            }
+        } catch (err) {
+            console.error('Error parsing JSON:', err);
+            return res.status(500).json({ success: false, error: 'Invalid JSON format received from the AI model.' });
+        }
+
+        console.log(updates);
+        
+        // Send the extracted updates back to the frontend
+        res.status(200).json({ success: true, updates });
+    } catch (err) {
+        console.error('Error fetching updates:', err);
+        res.status(500).json({ success: false, error: 'Failed to fetch updates from AI model.' });
+    }
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
