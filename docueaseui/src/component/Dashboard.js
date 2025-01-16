@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
+import { UpdatesCheck } from './UpdatesCheck';
 
 function Dashboard() {
     const [flowchartUrl, setFlowchartUrl] = useState(null);
@@ -11,12 +12,19 @@ function Dashboard() {
     const [showUrlInput, setShowUrlInput] = useState(true); // To control the visibility of the URL input field.
     const [hideInput, setHideInput] = useState(false);
 
+
+    const [updatePage, setUpdatePage] = useState(false);
+    const [dashboardPage, setDashboardPage] = useState(true);
     // Example function to hide input
     const handleSetUrl = () => {
         setHideInput(true);
         console.log('URL set:', url);
     };
 
+    const handleUpdatePage = () => {
+        setUpdatePage(true);
+        setDashboardPage(false);
+    }
 
     const fetchFlowchart = async () => {
         setLoading(true);
@@ -64,37 +72,25 @@ function Dashboard() {
     // };
 
     return (
-        <div className="container">
-            <header>
-                <h1>DocuEase</h1>
-                <button className="settings-btn">Settings</button>
-            </header>
 
-            <nav>
-                <ul>
-                    <li><button>Interactive Flowchart</button></li>
-                    <li><button>Documentation Summary</button></li>
-                    <li><button>Progress Tracker</button></li>
-                    <li><button>Update Check</button></li>
-                </ul>
-            </nav>
+        <>
+            {dashboardPage && (<div className="container">
+                <header>
+                    <h1>DocuEase</h1>
+                    <button className="settings-btn">Settings</button>
+                </header>
 
-            {showUrlInput && (
-                <div className={`url-input-container ${showUrlInput ? 'hidden' : ''}`}>
-                    <label htmlFor="url">Enter URL:</label>
-                    <input
-                        type="text"
-                        id="url"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        placeholder="Enter the URL here"
-                    />
-                </div>
-            )}
+                <nav>
+                    <ul>
+                        <li><button>Interactive Flowchart</button></li>
+                        <li><button>Documentation Summary</button></li>
+                        <li><button>Progress Tracker</button></li>
+                        <li><button onClick={handleUpdatePage}>Update Check</button></li>
+                    </ul>
+                </nav>
 
-            {!hideInput && (
-                <>
-                    <div className={`url-input-container ${hideInput ? 'hidden' : ''}`}>
+                {showUrlInput && (
+                    <div className={`url-input-container ${showUrlInput ? 'hidden' : ''}`}>
                         <label htmlFor="url">Enter URL:</label>
                         <input
                             type="text"
@@ -104,32 +100,55 @@ function Dashboard() {
                             placeholder="Enter the URL here"
                         />
                     </div>
+                )}
 
-                    <button onClick={handleSetUrl} className="generate-btn">
-                        Set URL
+                {!hideInput && (
+                    <>
+                        <div className={`url-input-container ${hideInput ? 'hidden' : ''}`}>
+                            <label htmlFor="url">Enter URL:</label>
+                            <input
+                                type="text"
+                                id="url"
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                placeholder="Enter the URL here"
+                            />
+                        </div>
+
+                        <button onClick={handleSetUrl} className="generate-btn">
+                            Set URL
+                        </button>
+                    </>)
+                }
+                <main>
+                    <h2>Interactive Flowchart</h2>
+                    <div className="flowchart-container">
+                        {loading && <p>Loading flowchart...</p>}
+                        {error && <p className="error">Error: {error}</p>}
+                        {!loading && !error && flowchartUrl ? (
+                            <img src={flowchartUrl} alt="Generated Flowchart" />
+                        ) : (
+                            !loading && <p>Flowchart will appear here...</p>
+                        )}
+                    </div>
+                    <button className="generate-btn" onClick={fetchFlowchart} disabled={loading}>
+                        {loading ? 'Generating...' : 'Generate New Flowchart'}
                     </button>
-                </>)
-            }
-            <main>
-                <h2>Interactive Flowchart</h2>
-                <div className="flowchart-container">
-                    {loading && <p>Loading flowchart...</p>}
-                    {error && <p className="error">Error: {error}</p>}
-                    {!loading && !error && flowchartUrl ? (
-                        <img src={flowchartUrl} alt="Generated Flowchart" />
-                    ) : (
-                        !loading && <p>Flowchart will appear here...</p>
-                    )}
-                </div>
-                <button className="generate-btn" onClick={fetchFlowchart} disabled={loading}>
-                    {loading ? 'Generating...' : 'Generate New Flowchart'}
-                </button>
-            </main>
+                </main>
 
-            <footer>
-                <p>&copy; {new Date().getFullYear()} DocuEase. All rights reserved.</p>
-            </footer>
-        </div>
+                <footer>
+                    <p>&copy; {new Date().getFullYear()} DocuEase. All rights reserved.</p>
+                </footer>
+            </div>)
+
+            }
+
+            {
+                updatePage && (
+                    <UpdatesCheck url={url} />
+                )
+            }
+        </>
     );
 }
 
