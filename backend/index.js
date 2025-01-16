@@ -70,9 +70,9 @@ app.post('/scrape', async (req, res) => {
 
         const rawData = await response.text(); // Get the raw string response
         console.log('Raw API Response:', rawData);
-        const jsonObject = JSON.parse(jsonString);
-        console.log(jsonObject);
-        console.log(typeof("Type of RAW Data"+rawData))
+        // const jsonObject = JSON.parse(jsonString);
+        // console.log(jsonObject);
+        console.log(typeof ("Type of RAW Data" + rawData))
         // res.status(200).json({ data: rawData });
 
         // Use Groq to extract the PlantUML content
@@ -98,7 +98,7 @@ app.post('/scrape', async (req, res) => {
         }
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to generate flowchart' });
+        res.status(500).json({ error: 'Failed to generate Response' });
     }
 });
 
@@ -107,12 +107,12 @@ app.post('/generate-flow-chart', async (req, res) => {
 
     console.log("Recieved & Processing Request");
 
-    const { text } = req.body;
+    const { url } = req.body;
 
-    if (!text) {
-        return res.status(400).json({ error: 'Text input is required' });
+    if (!url) {
+        return res.status(400).json({ error: 'URL input is required' });
     }
-
+    text = await scrapeUrl(url);
     // Define headers for the external API
     const myHeaders = {
         "Content-Type": "application/json",
@@ -120,7 +120,7 @@ app.post('/generate-flow-chart', async (req, res) => {
     };
 
     // Define the prompt
-    const prompt = `The given text: "${text}" should be converted into a PlantUML code that represents a flow chart. Only return the PlantUML code.`;
+    const prompt = `The given text: "${text}" should be converted into a Short & sweet PlantUML code that represents a flow chart. Only return the PlantUML code.`;
 
     // Define the request body for the external API
     const raw = JSON.stringify({
@@ -151,13 +151,15 @@ app.post('/generate-flow-chart', async (req, res) => {
                     content: `Extract only the PlantUML code from the following text:\n\n${rawData}`,
                 },
             ],
-            model: 'llama-3.3-70b-versatile',
+            model: 'llama-3.3-70b-specdec',
             temperature: 0,
             max_tokens: 1024,
         });
 
         // Directly access the content field from the response
         const plantUML = chatCompletion.choices[0]?.message?.content?.trim();
+
+        console.log("PlantUML: " + plantUML);
 
         if (plantUML) {
             res.status(200).json({ plantumlCode: plantUML });
@@ -198,17 +200,25 @@ app.post('/update-check', async (req, res) => {
                 },
             ],
             model: 'llama-3.3-70b-versatile',
-            temperature: 1,
+            temperature: 0,
             max_tokens: 32766,
         });
 
         // Extract data from the chat response
-        const data = chatCompletion.choices[0]?.message?.content?.trim();
+        let data = chatCompletion.choices[0]?.message?.content?.trim();
+        console.log(data);
+        console.log(typeof data);
 
-        // Parse the JSON response to extract `updates`
+        // Trim extra backticks (` ``` `) from start and end, if present
+        if (data.startsWith('```') && data.endsWith('```')) {
+            data = data.replace(/^```|```$/g, '').trim();
+        }
+
+        console.log('After trimming backticks:', data);
+
         let updates = [];
         try {
-            const parsedData = JSON.parse(data);
+            const parsedData = JSON.parse(data); // Attempt to parse the cleaned JSON string
             if (parsedData?.updates && Array.isArray(parsedData.updates)) {
                 updates = parsedData.updates;
             }
@@ -218,7 +228,7 @@ app.post('/update-check', async (req, res) => {
         }
 
         console.log(updates);
-        
+
         // Send the extracted updates back to the frontend
         res.status(200).json({ success: true, updates });
     } catch (err) {

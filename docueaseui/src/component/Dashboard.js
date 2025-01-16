@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
 import { UpdatesCheck } from './UpdatesCheck';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+
 
 function Dashboard() {
     const [flowchartUrl, setFlowchartUrl] = useState(null);
@@ -25,20 +28,37 @@ function Dashboard() {
         setUpdatePage(true);
         setDashboardPage(false);
     }
+    const closeHandleUpdatePage = () => {
+        setUpdatePage(false);
+        setDashboardPage(true);
+    }
 
     const fetchFlowchart = async () => {
         setLoading(true);
         setError(null);
 
         try {
+
+            // const scrapedRes = await axios.get(url);
+            // const html = scrapedRes.data;
+
+            // // Step 2: Use Cheerio to parse and scrape the desired content
+            // const $ = cheerio.load(html);
+            // const scrapedText = $('body').text(); // Replace 'body' with a more specific selector if needed
+
+            // console.log(scrapedText);
+
+
             const response = await fetch('http://localhost:5000/generate-flow-chart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    text: "**Introduction to useState Hook** ================================ The useState hook in React is a fundamental building block for managing state in functional components. It allows you to add state to functional components, making it possible to update the component's UI based on user interactions or other events. **How useState Works** -------------------- Here's a step-by-step breakdown of how useState works: 1. **Importing useState**: You import the useState hook from the react library. 2. **Declaring State**: You declare a state variable and an Updater function using the useState hook. 3. **Initializing State**: You pass an initial value to the useState hook to set the initial state. 4. **Updating State**: When the state needs to be updated, you call the Updater function with the new value. 5. **Rendering Component**: The component re-renders with the updated state value. **Flow Chart** ------------- Here's a flow chart illustrating the useState hook process: mermaid graph LR A[Component Mounts] -->|useState called|> B[Declare State and Updater] B -->|Initial Value|> C[Initialize State] C -->|User Interaction|> D[Updater Function Called] D -->|New Value|> E[Update State] E -->|Component Re-renders|> F[Render Component with Updated State] F -->|User Interaction|> D D -->|Updater Function Called|> E **Key Elements** -------------- Here are the key elements involved in the useState hook: * **State Variable**: The variable that stores the current state value. * **Updater Function**: The function that updates the state value. * **Initial Value**: The initial value passed to the useState hook. * **Component**: The functional component that uses the useState hook. **Code Example** jsx import { useState } from 'react'; function Counter() { // Declare state and updater const [count, setCount] = useState(0); // Update state when button is clicked return ( <div> <p>Count: {count}</p> <button onClick={() => setCount(count + 1)}>Increment</button> </div> ); } In this example, the useState hook is used to declare a count state variable and an setCount updater function. The count state is initialized to 0, and the setCount function is called when the button is clicked to update the state. The component re-renders with the updated state value.", // Replace with your content
+                    // text: "**`Introduction to useState Hook** ================================ The useState hook in React is a fundamental building block for managing state in functional components. It allows you to add state to functional components, making it possible to update the component's UI based on user interactions or other events. **How useState Works** -------------------- Here's a step-by-step breakdown of how useState works: 1. **Importing useState**: You import the useState hook from the react library. 2. **Declaring State**: You declare a state variable and an Updater function using the useState hook. 3. **Initializing State**: You pass an initial value to the useState hook to set the initial state. 4. **Updating State**: When the state needs to be updated, you call the Updater function with the new value. 5. **Rendering Component**: The component re-renders with the updated state value. **Flow Chart** ------------- Here's a flow chart illustrating the useState hook process: mermaid graph LR A[Component Mounts] -->|useState called|> B[Declare State and Updater] B -->|Initial Value|> C[Initialize State] C -->|User Interaction|> D[Updater Function Called] D -->|New Value|> E[Update State] E -->|Component Re-renders|> F[Render Component with Updated State] F -->|User Interaction|> D D -->|Updater Function Called|> E **Key Elements** -------------- Here are the key elements involved in the useState hook: * **State Variable**: The variable that stores the current state value. * **Updater Function**: The function that updates the state value. * **Initial Value**: The initial value passed to the useState hook. * **Component**: The functional component that uses the useState hook. **Code Example** jsx import { useState } from 'react'; function Counter() { // Declare state and updater const [count, setCount] = useState(0); // Update state when button is clicked return ( <div> <p>Count: {count}</p> <button onClick={() => setCount(count + 1)}>Increment</button> </div> ); } In this example, the useState hook is used to declare a count state variable and an setCount updater function. The count state is initialized to 0, and the setCount function is called when the button is clicked to update the state. The component re-renders with the updated state value`.", // Replace with your content
+                    url: url,
                 }),
+
             });
 
             if (!response.ok) {
@@ -47,9 +67,12 @@ function Dashboard() {
 
             const data = await response.json();
             const plantumlCode = data.plantumlCode;
+            console.log(plantumlCode);
 
             if (plantumlCode) {
                 const extractedCode = plantumlCode.replace(/```plantuml|```/g, '').trim();
+                console.log("Extracted Code: ", extractedCode);
+
                 const fixedCode = `@startuml\n${extractedCode}\n@enduml`;
                 const encoded = plantumlEncoder.encode(fixedCode);
                 const generatedUrl = `http://www.plantuml.com/plantuml/svg/${encoded}`;
@@ -72,7 +95,6 @@ function Dashboard() {
     // };
 
     return (
-
         <>
             {dashboardPage && (<div className="container">
                 <header>
@@ -82,10 +104,10 @@ function Dashboard() {
 
                 <nav>
                     <ul>
-                        <li><button>Interactive Flowchart</button></li>
+                        <li><button onClick={fetchFlowchart}>Interactive Flowchart</button></li>
                         <li><button>Documentation Summary</button></li>
-                        <li><button>Progress Tracker</button></li>
                         <li><button onClick={handleUpdatePage}>Update Check</button></li>
+                        <li><button>Progress Tracker</button></li>
                     </ul>
                 </nav>
 
@@ -126,7 +148,12 @@ function Dashboard() {
                         {loading && <p>Loading flowchart...</p>}
                         {error && <p className="error">Error: {error}</p>}
                         {!loading && !error && flowchartUrl ? (
-                            <img src={flowchartUrl} alt="Generated Flowchart" />
+                            <>
+                                <img src={flowchartUrl} alt="Generated Flowchart" id="flowchart-image" />
+                                <a href={flowchartUrl} download="flowchart.png" className="download-btn">
+                                    Download Diagram
+                                </a>
+                            </>
                         ) : (
                             !loading && <p>Flowchart will appear here...</p>
                         )}
@@ -136,6 +163,7 @@ function Dashboard() {
                     </button>
                 </main>
 
+
                 <footer>
                     <p>&copy; {new Date().getFullYear()} DocuEase. All rights reserved.</p>
                 </footer>
@@ -144,10 +172,14 @@ function Dashboard() {
             }
 
             {
-                updatePage && (
+                updatePage && (<>
+
+                    <button className="generate-btn" onClick={closeHandleUpdatePage}>Dashboard</button>
                     <UpdatesCheck url={url} />
+                </>
                 )
             }
+
         </>
     );
 }
