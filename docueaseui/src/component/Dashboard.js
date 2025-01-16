@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
 import { UpdatesCheck } from './UpdatesCheck';
+import DocSummary, { Summary } from './DocSummary'
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
@@ -18,6 +19,8 @@ function Dashboard() {
 
     const [updatePage, setUpdatePage] = useState(false);
     const [dashboardPage, setDashboardPage] = useState(true);
+    const [summaryPage, setSummaryPage] = useState(false);
+
     // Example function to hide input
     const handleSetUrl = () => {
         setHideInput(true);
@@ -30,6 +33,15 @@ function Dashboard() {
     }
     const closeHandleUpdatePage = () => {
         setUpdatePage(false);
+        setDashboardPage(true);
+    }
+
+    const handleSummaryPage = () => {
+        setSummaryPage(true);
+        setDashboardPage(false);
+    }
+    const closeHandleSummaryPage = () => {
+        setSummaryPage(false);
         setDashboardPage(true);
     }
 
@@ -105,7 +117,7 @@ function Dashboard() {
                 <nav>
                     <ul>
                         <li><button onClick={fetchFlowchart}>Interactive Flowchart</button></li>
-                        <li><button>Documentation Summary</button></li>
+                        <li><button onClick={handleSummaryPage}>Documentation Summary</button></li>
                         <li><button onClick={handleUpdatePage}>Update Check</button></li>
                         <li><button>Progress Tracker</button></li>
                     </ul>
@@ -178,6 +190,14 @@ function Dashboard() {
                     <UpdatesCheck url={url} />
                 </>
                 )
+            }
+
+
+            {
+                summaryPage && (<>
+                    <button className="generate-btn" onClick={closeHandleSummaryPage}>Dashboard</button>
+                    <DocSummary url={url} />
+                </>)
             }
 
         </>

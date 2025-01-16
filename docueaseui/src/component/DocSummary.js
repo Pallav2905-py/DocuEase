@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Summary = ({ url }) => {
+const DocSummary = ({ url }) => {
     const [loading, setLoading] = useState(false); // Loading state
     const [error, setError] = useState(null); // Error state
     const [content, setContent] = useState(''); // Summary content
@@ -25,18 +25,10 @@ const Summary = ({ url }) => {
 
             const data = await response.json();
 
-            // Clean the response to extract the JSON part
-            const rawSummary = data.summary;
-            const cleanedSummary = rawSummary.replace(/```json|```/g, '').trim();
-
-            // Parse the cleaned JSON string
-            const parsedSummary = JSON.parse(cleanedSummary);
-
-            if (parsedSummary?.content) {
-                setContent(parsedSummary.content);
-            } else {
-                throw new Error('No content found in the summary.');
-            }
+            // Extract the main content from the response
+            const rawSummary = data.content || '';
+            const cleanedSummary = rawSummary.replace(/```/g, '').trim(); // Remove any stray backticks
+            setContent(cleanedSummary);
         } catch (err) {
             console.error('Error fetching summary:', err);
             setError(err.message);
@@ -47,32 +39,32 @@ const Summary = ({ url }) => {
 
     const renderFormattedContent = () => {
         return content.split('\n').map((line, index) => {
-            // Remove backticks
+            // Remove unnecessary formatting characters
             line = line.replace(/`/g, '');
 
-            // Handle numbered list (1., 2., 3., etc.)
-            if (/^\d+\./.test(line)) {
-                return (
-                    <p key={index} style={{ marginLeft: '20px', marginBottom: '10px' }}>
-                        {line.replace(/^\d+\.\s*/, '')} {/* Remove the number and period */}
-                    </p>
-                );
-            }
-
-            // Handle bold (**bold**)
+            // Format bold (**bold**)
             if (line.startsWith('**') && line.endsWith('**')) {
                 return (
                     <p key={index} style={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                        {line.replace(/\*\*/g, '')} {/* Remove the surrounding '**' */}
+                        {line.replace(/\*\*/g, '')}
                     </p>
                 );
             }
 
-            // Handle italic (*italic*)
+            // Format italic (*italic*)
             if (line.startsWith('*') && line.endsWith('*')) {
                 return (
                     <p key={index} style={{ fontStyle: 'italic', marginBottom: '10px' }}>
-                        {line.replace(/\*/g, '')} {/* Remove the surrounding '*' */}
+                        {line.replace(/\*/g, '')}
+                    </p>
+                );
+            }
+
+            // Handle numbered list (e.g., 1., 2.)
+            if (/^\d+\.\s/.test(line)) {
+                return (
+                    <p key={index} style={{ marginLeft: '20px', marginBottom: '10px' }}>
+                        {line.replace(/^\d+\.\s/, '')}
                     </p>
                 );
             }
@@ -131,4 +123,4 @@ const Summary = ({ url }) => {
     );
 };
 
-export default Summary;
+export default DocSummary;

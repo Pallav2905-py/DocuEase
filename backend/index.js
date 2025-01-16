@@ -83,16 +83,34 @@ app.post('/scrape', async (req, res) => {
                     content: `Extract only the content information from the text, Strictly return in Json format:\n\n${rawData}`,
                 },
             ],
-            model: 'llama-3.3-70b-versatile',
+            model: 'llama-3.3-70b-specdec',
             temperature: 0,
-            max_tokens: 32768,
+            max_tokens: 1024,
         });
 
         // Directly access the content field from the response
-        const summary = chatCompletion.choices[0]?.message?.content?.trim();
+        let summary = chatCompletion.choices[0]?.message?.content?.trim();
 
+
+        if (summary.startsWith('```') && summary.endsWith('```')) {
+            summary = summary.replace(/^```|```$/g, '').trim();
+        }
+        console.log("content" + summary);
+        console.log(typeof summary);
+        console.log(typeof summary.content);
+
+        const cleanedString = summary.trim().replace(/^json/, "").trim();
+
+        // Step 2: Parse as JSON
+        const parsedData = JSON.parse(cleanedString);
+
+        // Step 3: Join the content array into a single string
+        // const contentString = parsedData.content.join("");
+
+        console.log(parsedData.content);
+        
         if (summary) {
-            res.status(200).json({ summary: summary });
+            res.status(200).json(parsedData);
         } else {
             throw new Error('Failed to extract summary code');
         }
