@@ -3,9 +3,7 @@
 import React, { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
 import { UpdatesCheck } from './UpdatesCheck';
-import DocSummary, { Summary } from './DocSummary'
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+import DocSummary from './DocSummary'
 
 
 function Dashboard() {
