@@ -12,7 +12,7 @@ const port = 5000;
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-const groq = new Groq({ apiKey: "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" });
+const groq = new Groq({ apiKey: "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" });
 
 
 async function scrapeUrl(url) {
@@ -83,7 +83,7 @@ app.post('/scrape', async (req, res) => {
                     content: `Extract only the content information from the text, Strictly return in Json format:\n\n${rawData}`,
                 },
             ],
-            model: 'llama-3.3-70b-specdec',
+            model: 'llama-3.3-70b-versatile',
             temperature: 0,
             max_tokens: 1024,
         });
@@ -169,7 +169,7 @@ app.post('/generate-flow-chart', async (req, res) => {
                     content: `Extract only the PlantUML code from the following text:\n\n${rawData}`,
                 },
             ],
-            model: 'llama-3.3-70b-specdec',
+            model: 'llama-3.3-70b-versatile',
             temperature: 0,
             max_tokens: 1024,
         });
